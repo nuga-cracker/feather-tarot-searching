@@ -3,171 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Feather Finder Library</title>
+    <title>Divine Feather Messenger</title>
     <style>
-        :root { --accent: #4a90e2; --text: #2d3748; --bg: #f7fafc; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); margin: 0; padding: 15px; -webkit-tap-highlight-color: transparent; }
-        .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); box-sizing: border-box; }
+        * { box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f4f5; margin: 0; padding: 16px; color: #18181b; -webkit-tap-highlight-color: transparent; }
+        .app-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
         
-        /* 버튼 구역: 모바일에서 버튼이 밀리지 않게 설정 */
-        .alphabet-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; justify-content: center; background: #fdfdfd; padding: 12px; border-radius: 10px; border: 1px solid #edf2f7; }
-        .letter-btn { border: 1px solid #e2e8f0; background: #fff; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; color: var(--text); transition: 0.2s; }
-        .letter-btn:active { background: var(--accent); color: #fff; transform: scale(0.95); }
-
-        .search-wrap { position: relative; width: 100%; margin-bottom: 10px; }
-        #searchBox { width: 100%; padding: 16px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 16px; box-sizing: border-box; outline: none; transition: 0.3s; }
-        #searchBox:focus { border-color: var(--accent); }
-
-        /* 연관 검색어 목록: 절대 경로 및 최상단 배치 */
-        .suggestions { position: absolute; width: 100%; background: #fff; border: 1px solid #e2e8f0; border-radius: 0 0 12px 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: none; max-height: 250px; overflow-y: auto; z-index: 9999; margin-top: -2px; }
-        .suggest-item { padding: 15px; cursor: pointer; border-bottom: 1px solid #f7fafc; font-size: 16px; color: var(--text); }
+        .alphabet-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; justify-content: center; }
+        .alpha-btn { width: calc(100% / 7 - 6px); min-width: 36px; padding: 10px 0; border: 1px solid #e4e4e7; background: #fafafa; border-radius: 6px; text-align: center; font-weight: 600; cursor: pointer; font-size: 14px; user-select: none; transition: background-color 0.2s; }
+        .alpha-btn:active { background-color: #3b82f6; color: #ffffff; border-color: #3b82f6; }
+        
+        .search-wrapper { position: relative; width: 100%; margin-bottom: 20px; }
+        #searchInput { width: 100%; padding: 16px; border: 2px solid #e4e4e7; border-radius: 8px; font-size: 16px; outline: none; transition: border-color 0.2s; background: #ffffff; }
+        #searchInput:focus { border-color: #3b82f6; }
+        
+        #suggestList { position: absolute; top: 100%; left: 0; width: 100%; background: #ffffff; border: 1px solid #e4e4e7; border-top: none; border-radius: 0 0 8px 8px; max-height: 240px; overflow-y: auto; z-index: 100; display: none; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); margin-top: -2px; }
+        .suggest-item { padding: 16px; cursor: pointer; border-bottom: 1px solid #f4f4f5; font-size: 15px; color: #27272a; }
         .suggest-item:last-child { border-bottom: none; }
-
-        /* 결과 화면 */
-        #displayArea { display: none; margin-top: 30px; animation: slideUp 0.4s ease; border-top: 2px solid #f0f2f5; padding-top: 25px; }
-        .bird-name { font-size: 28px; font-weight: 800; color: var(--accent); margin: 0 0 5px 0; }
-        .meta { font-size: 14px; color: #718096; font-weight: 600; text-transform: uppercase; margin-bottom: 15px; }
-        .message-box { background: #f8fafc; padding: 20px; border-radius: 12px; line-height: 1.8; border-left: 6px solid var(--accent); margin: 20px 0; color: #4a5568; font-size: 16px; }
-        .details-grid { display: grid; grid-template-columns: 1fr; gap: 8px; font-size: 14px; color: #4a5568; }
-        .details-item { background: #fff; border: 1px solid #edf2f7; padding: 10px; border-radius: 8px; }
-        .affirmation { text-align: center; font-style: italic; color: #2d3748; margin-top: 30px; padding: 20px; background: #fffcf0; border-radius: 12px; border: 1px solid #feebc8; line-height: 1.5; }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .suggest-item:active { background-color: #f0f9ff; }
+        
+        #resultArea { display: none; padding-top: 24px; border-top: 2px solid #f4f4f5; animation: fadeIn 0.3s ease; }
+        .card-title { font-size: 26px; font-weight: 800; color: #3b82f6; margin: 0 0 8px 0; }
+        .card-meta { font-size: 13px; color: #71717a; font-weight: 600; text-transform: uppercase; margin-bottom: 20px; letter-spacing: 0.5px; }
+        .card-message { background: #f0f9ff; border-left: 4px solid #3b82f6; padding: 18px; border-radius: 0 8px 8px 0; font-size: 15px; line-height: 1.6; margin-bottom: 20px; color: #0f172a; }
+        .card-details { display: grid; grid-template-columns: 1fr; gap: 10px; font-size: 14px; margin-bottom: 24px; }
+        .detail-row { background: #fafafa; border: 1px solid #e4e4e7; padding: 12px; border-radius: 8px; color: #3f3f46; }
+        .detail-row strong { color: #18181b; }
+        .card-aff { text-align: center; font-style: italic; background: #fffbeb; padding: 18px; border-radius: 8px; color: #92400e; font-weight: 500; line-height: 1.5; border: 1px solid #fef3c7; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="app-container">
     <div class="alphabet-grid" id="alphaBtns"></div>
-    <div class="search-wrap">
-        <input type="text" id="searchBox" placeholder="카드 이름을 입력하세요..." autocomplete="off">
-        <div id="suggestList" class="suggestions"></div>
+    
+    <div class="search-wrapper">
+        <input type="text" id="searchInput" placeholder="카드 이름 검색 (예: Owl, Swan...)" autocomplete="off">
+        <div id="suggestList"></div>
     </div>
 
-    <div id="displayArea">
-        <h2 class="bird-name" id="bName"></h2>
-        <div class="meta" id="bMeta"></div>
-        <div class="message-box" id="bMsg"></div>
-        <div class="details-grid">
-            <div class="details-item" id="bEnergy"></div>
-            <div class="details-item" id="bColor"></div>
+    <div id="resultArea">
+        <h2 class="card-title" id="resTitle"></h2>
+        <div class="card-meta" id="resMeta"></div>
+        <div class="card-message" id="resMsg"></div>
+        <div class="card-details">
+            <div class="detail-row" id="resEnergy"></div>
+            <div class="detail-row" id="resColor"></div>
         </div>
-        <div class="affirmation" id="bAff"></div>
+        <div class="card-aff" id="resAff"></div>
     </div>
 </div>
 
 <script>
-const deck = [
-    [span_0](start_span)[span_1](start_span){ name: "Blackbird", msg: "보이지 않는 세계의 신비와 마법을 환영하세요. 어둠 속에서 찾은 영감이 당신의 숨겨진 잠재력을 깨워줄 것입니다.[span_0](end_span)[span_1](end_span)[span_2](start_span)", energy: "Mystery, Hidden potential[span_2](end_span)[span_3](start_span)", season: "Spring, Summer, Fall[span_3](end_span)[span_4](start_span)", elem: "Air, Water[span_4](end_span)[span_5](start_span)", color: "Black, Red[span_5](end_span)[span_6](start_span)", aff: "나는 삶의 신비와 마법을 받아들이고 그 안으로 기꺼이 나아갑니다.[span_6](end_span)" },
-    { name: "Bluebird", msg: "당신의 공간에 평화와 기쁨의 축복을 전합니다. [span_7](start_span)[span_8](start_span)특히 자신에게 전하는 메시지가 친절하고 긍정적인지 확인해 보세요.[span_7](end_span)[span_8](end_span)[span_9](start_span)", energy: "Happiness, Joy, Peace[span_9](end_span)[span_10](start_span)", season: "Winter, Spring[span_10](end_span)[span_11](start_span)", elem: "Air[span_11](end_span)[span_12](start_span)", color: "Blue[span_12](end_span)[span_13](start_span)", aff: "나는 내 삶 속에 더 깊은 평화와 기쁨의 감각을 초대합니다.[span_13](end_span)" },
-    [span_14](start_span)[span_15](start_span)[span_16](start_span){ name: "Blue Jay", msg: "자신이 가진 다양한 기술과 특성을 통합하여 숙련된 마스터로서 목표를 향해 나아가세요.[span_14](end_span)[span_15](end_span)[span_16](end_span)[span_17](start_span)", energy: "Mastery, Communication, Family[span_17](end_span)[span_18](start_span)", season: "All year round[span_18](end_span)[span_19](start_span)", elem: "Earth, Air[span_19](end_span)[span_20](start_span)", color: "Blue, White, Black[span_20](end_span)[span_21](start_span)", aff: "나는 나의 모든 부분을 되찾고 최고의 잠재력을 향해 마음을 엽니다.[span_21](end_span)" },
-    { name: "Canary", msg: "자신의 목소리를 사용하여 다른 이들을 고양시키고 치유하세요. [span_22](start_span)이제 주저함을 버리고 당당하게 표현할 때입니다.[span_22](end_span)[span_23](start_span)", energy: "Communication, Sensitivity[span_23](end_span)[span_24](start_span)", season: "All year round[span_24](end_span)[span_25](start_span)", elem: "Fire, Air[span_25](end_span)[span_26](start_span)", color: "Yellow, Blue[span_26](end_span)", aff: "나는 나의 표현이 깨어나도록 허용합니다. [span_27](start_span)나는 독특하고 가치 있는 존재입니다.[span_27](end_span)" },
-    { name: "Cardinal", msg: "자신감과 자존감을 가지고 리더십의 기회를 잡으세요. [span_28](start_span)[span_29](start_span)당신은 이 여정에서 매우 중요한 존재임을 기억하세요.[span_28](end_span)[span_29](end_span)[span_30](start_span)", energy: "Leadership, Self-worth, Vitality, Confidence[span_30](end_span)[span_31](start_span)", season: "Winter[span_31](end_span)[span_32](start_span)", elem: "Fire, Air[span_32](end_span)[span_33](start_span)", color: "Red, Black[span_33](end_span)[span_34](start_span)", aff: "나는 자신감을 가지고 새로운 기회들을 기꺼이 수용합니다.[span_34](end_span)" },
-    { name: "Chickadee", msg: "삶을 되돌아보고 낡은 패턴을 버릴 공간을 만드세요. [span_35](start_span)[span_36](start_span)새로운 변화의 징후에 주의를 기울일 때입니다.[span_35](end_span)[span_36](end_span)[span_37](start_span)", energy: "Communication, Activity, Adaptability[span_37](end_span)[span_38](start_span)", season: "Spring, Fall[span_38](end_span)[span_39](start_span)", elem: "Earth, Air[span_39](end_span)[span_40](start_span)", color: "Black, White, Grey, Brown[span_40](end_span)[span_41](start_span)", aff: "나는 나를 붙잡고 있는 모든 생각과 패턴을 기꺼이 놓아줍니다.[span_41](end_span)" },
-    { name: "Condor", msg: "지나온 투쟁과 고난을 넘어 이제 삶을 더 넓은 시야로 바라보세요. [span_42](start_span)[span_43](start_span)당신은 이미 그것을 이겨낼 힘을 가지고 있습니다.[span_42](end_span)[span_43](end_span)[span_44](start_span)", energy: "Improvement, Power, Adaptability[span_44](end_span)[span_45](start_span)", season: "Winter, Fall[span_45](end_span)[span_46](start_span)", elem: "Earth, Air[span_46](end_span)[span_47](start_span)", color: "Black, White, Grey, Brown[span_47](end_span)", aff: "나의 최고의 비전은 넓고 광활합니다. [span_48](start_span)나는 나를 기다리는 모든 것을 환영합니다.[span_48](end_span)" },
-    { name: "Crane", msg: "당신을 지지해 줄 장기적인 파트너십과 관계의 강화가 다가오고 있습니다. [span_49](start_span)[span_50](start_span)감성 지능을 활용해 주변을 살피세요.[span_49](end_span)[span_50](end_span)[span_51](start_span)", energy: "Longevity, Creation, Union[span_51](end_span)[span_52](start_span)", season: "All year round[span_52](end_span)[span_53](start_span)", elem: "Water, Air[span_53](end_span)[span_54](start_span)", color: "White, Grey[span_54](end_span)[span_55](start_span)", aff: "나는 이제 나의 신성한 파트너십을 신뢰하고 받아들일 준비가 되었습니다.[span_55](end_span)" },
-    { name: "Crow", msg: "우주의 법칙과 창조의 힘을 믿고 당신이 원하는 것을 현실로 만들기 시작하세요. [span_56](start_span)[span_57](start_span)[span_58](start_span)이 과정을 즐기길 바랍니다.[span_56](end_span)[span_57](end_span)[span_58](end_span)[span_59](start_span)", energy: "Creation, Universal laws, Communication[span_59](end_span)[span_60](start_span)", season: "All year round[span_60](end_span)[span_61](start_span)", elem: "Earth, Air[span_61](end_span)[span_62](start_span)", color: "Black, Purple[span_62](end_span)[span_63](start_span)", aff: "나는 나의 높은 연결성을 인정하며, 강력한 창조의 채널이 됩니다.[span_63](end_span)" },
-    { name: "Dove", msg: "평화와 사랑, 축복의 메시지가 도착했습니다. [span_64](start_span)[span_65](start_span)숨을 고르고 내면의 고요함을 되찾아 세상과 연결되세요.[span_64](end_span)[span_65](end_span)[span_66](start_span)", energy: "Peace, Happiness, Serenity[span_66](end_span)[span_67](start_span)", season: "All year round[span_67](end_span)[span_68](start_span)", elem: "Earth, Water, Air[span_68](end_span)[span_69](start_span)", color: "White, Ivory, Grey[span_69](end_span)[span_70](start_span)", aff: "평화는 내 안과 주변에 늘 존재하며, 나는 이를 감사히 나눕니다.[span_70](end_span)" },
-    [span_71](start_span)[span_72](start_span){ name: "Duck", msg: "삶이 너무 바빠 길을 잃었다면, 당신을 가장 편안하게 해주는 커뮤니티와 장소로 돌아가 위로를 얻으세요.[span_71](end_span)[span_72](end_span)[span_73](start_span)", energy: "Emotional support, Comfort, Community[span_73](end_span)[span_74](start_span)", season: "Spring, Summer[span_74](end_span)[span_75](start_span)", elem: "Earth, Water, Air[span_75](end_span)[span_76](start_span)", color: "White, Brown, Teal, Green, Black[span_76](end_span)[span_77](start_span)", aff: "나는 나에게 안전과 지지를 제공하는 친구와 환경을 환영합니다.[span_77](end_span)" },
-    { name: "Eagle", msg: "영적 각성이 일어나고 있습니다. [span_78](start_span)[span_79](start_span)[span_80](start_span)더 높은 관점에서 삶을 바라보고 개인적인 책임을 다해 새로운 비전을 세우세요.[span_78](end_span)[span_79](end_span)[span_80](end_span)[span_81](start_span)", energy: "Power, Perception, Spiritual insight, Knowledge[span_81](end_span)[span_82](start_span)", season: "Summer[span_82](end_span)[span_83](start_span)", elem: "Fire, Air[span_83](end_span)[span_84](start_span)", color: "White, Black, Brown, Yellow[span_84](end_span)[span_85](start_span)", aff: "나는 나의 힘과 지식, 그리고 비전에 지금 깨어납니다.[span_85](end_span)" },
-    { name: "Falcon", msg: "당신은 이미 목표를 이룰 기술과 통찰력을 갖췄습니다. [span_86](start_span)[span_87](start_span)망설임 없이 도약하여 원하는 바를 쟁취하세요.[span_86](end_span)[span_87](end_span)[span_88](start_span)", energy: "Power, Perception, Empowerment[span_88](end_span)[span_89](start_span)", season: "Summer, Fall[span_89](end_span)[span_90](start_span)", elem: "Fire, Air[span_90](end_span)[span_91](start_span)", color: "White, Brown[span_91](end_span)[span_92](start_span)", aff: "나는 나의 본능을 따르며 나의 최고의 목표를 달성합니다.[span_92](end_span)" },
-    { name: "Finch", msg: "기쁨과 풍요로운 기회들이 다가옵니다. [span_93](start_span)[span_94](start_span)[span_95](start_span)활동과 휴식 사이의 균형을 유지하며 새로운 시작을 준비하세요.[span_93](end_span)[span_94](end_span)[span_95](end_span)[span_96](start_span)", energy: "Vitality, Energy, Abundance[span_96](end_span)[span_97](start_span)", season: "Summer[span_97](end_span)[span_98](start_span)", elem: "Air[span_98](end_span)[span_99](start_span)", color: "White, Brown, Red, Grey, Yellow[span_99](end_span)[span_100](start_span)", aff: "나는 새로운 풍요와 빛을 맞이하고 포용할 준비가 되었습니다.[span_100](end_span)" },
-    { name: "Flicker", msg: "자연스러운 변화의 리듬을 신뢰하세요. [span_101](start_span)[span_102](start_span)과거의 패턴에 대한 저항을 버리고 긍정적인 성장의 흐름을 따르세요.[span_101](end_span)[span_102](end_span)[span_103](start_span)", energy: "New rhythm, Growth[span_103](end_span)[span_104](start_span)", season: "Summer[span_104](end_span)[span_105](start_span)", elem: "Earth, Air[span_105](end_span)[span_106](start_span)", color: "White, Black, Red[span_106](end_span)[span_107](start_span)", aff: "나는 삶의 무한한 리듬과 흐름을 신뢰합니다.[span_107](end_span)" },
-    { name: "Goose", msg: "채워지지 않은 욕망이 새로운 에너지를 자극합니다. [span_108](start_span)이제 당신의 진정한 퀘스트를 찾아 신속하게 움직일 때입니다.[span_108](end_span)[span_109](start_span)", energy: "Travel, Communication, Fulfillment[span_109](end_span)[span_110](start_span)", season: "Spring, Fall[span_110](end_span)[span_111](start_span)", elem: "Earth, Water, Air[span_111](end_span)[span_112](start_span)", color: "White, Black, Grey, Brown[span_112](end_span)[span_113](start_span)", aff: "나는 이제 나의 진정한 탐구를 시작하며 가슴을 열어 성취를 맞이합니다.[span_113](end_span)" },
-    { name: "Grouse", msg: "신성한 춤과 움직임을 통해 내면의 고요함과 연결되세요. [span_114](start_span)[span_115](start_span)당신만의 신성한 소용돌이를 찾을 시간입니다.[span_114](end_span)[span_115](end_span)[span_116](start_span)", energy: "Movement, Stillness, Life cycle[span_116](end_span)[span_117](start_span)", season: "Spring[span_117](end_span)[span_118](start_span)", elem: "Earth, Air[span_118](end_span)[span_119](start_span)", color: "White, Black, Brown[span_119](end_span)[span_120](start_span)", aff: "나는 내 안의 독특하고 신성한 나선형의 힘을 찾고 그것에 마음을 엽니다.[span_120](end_span)" },
-    { name: "Hawk", msg: "당신의 직관적인 인식이 옳음을 확인해 줍니다. [span_121](start_span)[span_122](start_span)[span_123](start_span)놓치고 있었던 신호나 동시성(Synchronicity)에 주의를 기울이세요.[span_121](end_span)[span_122](end_span)[span_123](end_span)[span_124](start_span)", energy: "Communication, Vision, Messages[span_124](end_span)[span_125](start_span)", season: "Spring, Fall[span_125](end_span)[span_126](start_span)", elem: "Air[span_126](end_span)[span_127](start_span)", color: "White, Black, Brown[span_127](end_span)", aff: "통찰과 영감은 나의 신성한 전령입니다. [span_128](start_span)나는 그 안내를 듣고 받아들입니다.[span_128](end_span)" },
-    { name: "Heron", msg: "남의 시선을 신경 쓰지 말고 당신만의 독특한 길을 걷으세요. [span_129](start_span)[span_130](start_span)인내심을 갖고 당신의 경로가 펼쳐지도록 두세요.[span_129](end_span)[span_130](end_span)[span_131](start_span)", energy: "Self-reliance, Balance, Choice[span_131](end_span)[span_132](start_span)", season: "Spring[span_132](end_span)[span_133](start_span)", elem: "Water, Air[span_133](end_span)[span_134](start_span)", color: "White, Blue, Grey, Brown[span_134](end_span)[span_135](start_span)", aff: "나는 이제 나의 진정한 삶의 목적을 수용하고 받아들입니다.[span_135](end_span)" },
-    { name: "Hummingbird", msg: "과거의 부담과 부정적인 에너지를 털어내고 지금 이 순간의 달콤함과 기쁨을 만끽하세요. [span_136](start_span)[span_137](start_span)[span_138](start_span)가벼운 존재가 되는 것이 선물입니다.[span_136](end_span)[span_137](end_span)[span_138](end_span)[span_139](start_span)", energy: "Joy, Sweetness, Freedom[span_139](end_span)[span_140](start_span)", season: "Summer[span_140](end_span)[span_141](start_span)", elem: "Air[span_141](end_span)[span_142](start_span)", color: "Red, White, Green[span_142](end_span)", aff: "나는 가볍고 즐거우며 자유롭습니다. [span_143](start_span)나는 삶의 달콤함을 품습니다.[span_143](end_span)" },
-    { name: "Kingfisher", msg: "풍요와 번영의 약속이 다가옵니다. [span_144](start_span)[span_145](start_span)너무 애쓰지 말고 자연스러운 흐름이 당신에게 오도록 마음을 열고 준비하세요.[span_144](end_span)[span_145](end_span)[span_146](start_span)", energy: "Prosperity, Luck, New warmth[span_146](end_span)[span_147](start_span)", season: "Summer[span_147](end_span)[span_148](start_span)", elem: "Air, Water[span_148](end_span)[span_149](start_span)", color: "Red, White, Green, Grey, Blue[span_149](end_span)", aff: "나의 세상은 사랑스럽고 풍요롭습니다. [span_150](start_span)나는 이 선물들을 받기 위해 마음을 엽니다.[span_150](end_span)" },
-    { name: "Loon", msg: "당신의 꿈에 주의를 기울이세요. [span_151](start_span)[span_152](start_span)[span_153](start_span)보이지 않는 세계에서의 메시지가 꿈을 통해 더 선명하고 상징적으로 나타날 것입니다.[span_151](end_span)[span_152](end_span)[span_153](end_span)[span_154](start_span)", energy: "Dreams, Messages, Consciousness[span_154](end_span)[span_155](start_span)", season: "Summer[span_155](end_span)[span_156](start_span)", elem: "Air, Water[span_156](end_span)[span_157](start_span)", color: "Black, White[span_157](end_span)[span_158](start_span)", aff: "나의 꿈과 비전은 강력하고 활기차며 명확합니다.[span_158](end_span)" },
-    { name: "Magpie", msg: "물질적인 집착보다는 내면과 외면의 균형을 찾으세요. [span_159](start_span)[span_160](start_span)조만간 마법 같은 행운의 기회가 찾아올 것입니다.[span_159](end_span)[span_160](end_span)[span_161](start_span)", energy: "Materialism, Balance, Good fortune[span_161](end_span)[span_162](start_span)", season: "Spring, Summer[span_162](end_span)[span_163](start_span)", elem: "Air[span_163](end_span)[span_164](start_span)", color: "Black, White[span_164](end_span)[span_165](start_span)", aff: "나는 나의 경로에 진실하고 균형을 유지하는 데 필요한 것만을 구합니다.[span_165](end_span)" },
-    { name: "Meadowlark", msg: "자기 발견의 멋진 모험이 시작됩니다. [span_166](start_span)[span_167](start_span)당신의 내면의 힘과 자신감을 믿고 유쾌한 마음으로 성장을 즐기세요.[span_166](end_span)[span_167](end_span)[span_168](start_span)", energy: "Self-development, Cheerfulness[span_168](end_span)[span_169](start_span)", season: "Summer[span_169](end_span)[span_170](start_span)", elem: "Earth, Air[span_170](end_span)[span_171](start_span)", color: "Black, Yellow, White[span_171](end_span)[span_172](start_span)", aff: "나는 내 안의 빛이라는 반가운 선물을 소중히 여기기로 선택합니다.[span_172](end_span)" },
-    { name: "Nuthatch", msg: "영감을 얻기 위해 높이 날아오르되, 그 지혜를 현실 세계에서 실질적인 행동으로 옮기세요. [span_173](start_span)[span_174](start_span)신선한 시각이 필요합니다.[span_173](end_span)[span_174](end_span)[span_175](start_span)", energy: "Grounding, Faith, New perspectives[span_175](end_span)[span_176](start_span)", season: "Summer[span_176](end_span)[span_177](start_span)", elem: "Earth, Air[span_177](end_span)[span_178](start_span)", color: "Black, Blue, White, Grey, Brown[span_178](end_span)[span_179](start_span)", aff: "흔들리지 않는 믿음으로, 나는 새로운 관점이 나타나도록 허용합니다.[span_179](end_span)" },
-    { name: "Oriole", msg: "창의성을 발휘해 새로운 아이디어를 삶에 엮어 넣으세요. [span_180](start_span)[span_181](start_span)[span_182](start_span)태양처럼 긍정적인 변화와 성공이 당신을 기다립니다.[span_180](end_span)[span_181](end_span)[span_182](end_span)[span_183](start_span)", energy: "Happiness, New projects, Creativity[span_183](end_span)[span_184](start_span)", season: "Summer[span_184](end_span)[span_185](start_span)", elem: "Air, Fire[span_185](end_span)[span_186](start_span)", color: "Orange, Yellow, Black[span_186](end_span)[span_187](start_span)", aff: "나의 창의성과 프로젝트들은 황금빛으로 축복받았습니다.[span_187](end_span)" },
-    { name: "Osprey", msg: "성공과 풍요의 징조입니다. [span_188](start_span)[span_189](start_span)우선순위를 명확히 정하고 당신의 독특한 기술을 활용해 목표에 과감히 뛰어드세요.[span_188](end_span)[span_189](end_span)[span_190](start_span)", energy: "Abundance, Success, Skill[span_190](end_span)[span_191](start_span)", season: "Summer, Fall[span_191](end_span)[span_192](start_span)", elem: "Water, Air[span_192](end_span)[span_193](start_span)", color: "Black, White, Grey, Brown[span_193](end_span)[span_194](start_span)", aff: "나는 내 삶의 신성한 풍요로움에 감사합니다.[span_194](end_span)" },
-    { name: "Ostrich", msg: "머릿속의 지식을 실질적으로 적용할 시간입니다. [span_195](start_span)[span_196](start_span)가끔은 내면을 깊이 들여다보며 당신의 진실을 존중하세요.[span_195](end_span)[span_196](end_span)[span_197](start_span)", energy: "Grounding, Truth, Choice[span_197](end_span)[span_198](start_span)", season: "All year round[span_198](end_span)[span_199](start_span)", elem: "Earth[span_199](end_span)[span_200](start_span)", color: "Black, White, Grey, Brown[span_200](end_span)", aff: "진실이 나의 여정을 안내합니다. [span_201](start_span)나는 이 방식 안에서 완전히 접지(Grounding)됩니다.[span_201](end_span)" },
-    { name: "Owl", msg: "당신의 직관은 정확합니다. [span_202](start_span)[span_203](start_span)어둠이나 불확실성에 저항하지 말고 내면의 지혜를 통해 답을 명확히 찾아내세요.[span_202](end_span)[span_203](end_span)[span_204](start_span)", energy: "Intuition, Listening, Awareness[span_204](end_span)[span_205](start_span)", season: "Fall[span_205](end_span)[span_206](start_span)", elem: "Air[span_206](end_span)[span_207](start_span)", color: "Black, White, Grey, Brown[span_207](end_span)", aff: "나의 직관은 강력하고 활기찹니다. [span_208](start_span)나는 이 내면의 지혜를 존중합니다.[span_208](end_span)" },
-    { name: "Parrot", msg: "타인의 의견이나 판단에 휘둘리지 말고 당신만의 독특한 목소리를 내세요. [span_209](start_span)[span_210](start_span)[span_211](start_span)당신의 개성을 빛낼 용기가 필요합니다.[span_209](end_span)[span_210](end_span)[span_211](end_span)[span_212](start_span)", energy: "Personal expression, Color, Individuality[span_212](end_span)[span_213](start_span)", season: "All year round[span_213](end_span)[span_214](start_span)", elem: "Air[span_214](end_span)[span_215](start_span)", color: "Blue, Green, Yellow, Red, White[span_215](end_span)[span_216](start_span)", aff: "나는 세상에서 나의 개성과 독특한 표현을 존중합니다.[span_216](end_span)" },
-    { name: "Peacock", msg: "낡은 경험을 벗어던지고 지혜로운 영혼으로서 다시 태어나세요. [span_217](start_span)당신의 영혼이 여정을 안내하고 있음을 믿으세요.[span_217](end_span)[span_218](start_span)", energy: "Vision, Rebirth, Watchfulness[span_218](end_span)[span_219](start_span)", season: "Spring, Fall[span_219](end_span)[span_220](start_span)", elem: "Earth, Air[span_220](end_span)[span_221](start_span)", color: "Blue, Green, Gold, Brown[span_221](end_span)[span_222](start_span)", aff: "나는 내 영혼의 신성한 지혜에 대한 더 큰 이해를 구합니다.[span_222](end_span)" },
-    { name: "Pelican", msg: "용서의 힘을 사용해 과거의 고통과 죄책감을 털어내세요. [span_223](start_span)[span_224](start_span)[span_225](start_span)자신과 타인을 용서할 때 비로소 더 가볍게 날아오를 수 있습니다.[span_223](end_span)[span_224](end_span)[span_225](end_span)[span_226](start_span)", energy: "Forgiveness, Selflessness, Emotions[span_226](end_span)[span_227](start_span)", season: "Spring, Summer, Fall[span_227](end_span)[span_228](start_span)", elem: "Water, Air[span_228](end_span)[span_229](start_span)", color: "Brown, White[span_229](end_span)[span_230](start_span)", aff: "나는 모든 것과 모든 사람을, 특히 나 자신을 용서합니다.[span_230](end_span)" },
-    { name: "Pheasant", msg: "가정생활과 창의적인 프로젝트에 관심을 기울이세요. [span_231](start_span)[span_232](start_span)[span_233](start_span)조화롭고 지지적인 환경이 당신의 창조적 에너지를 깨울 것입니다.[span_231](end_span)[span_232](end_span)[span_233](end_span)[span_234](start_span)", energy: "Creativity, Fertility, Sexuality[span_234](end_span)[span_235](start_span)", season: "All year round[span_235](end_span)[span_236](start_span)", elem: "Earth, Air[span_236](end_span)[span_237](start_span)", color: "Brown, White, Cream[span_237](end_span)[span_238](start_span)", aff: "나는 활기차고 생동감 넘치며 창조적인 존재입니다.[span_238](end_span)" },
-    { name: "Raven", msg: "당신의 개인적인 힘을 인정하고 우주의 신호를 따르세요. [span_239](start_span)[span_240](start_span)[span_241](start_span)당신의 잠재력은 무한하며 이제 그것을 소유할 때입니다.[span_239](end_span)[span_240](end_span)[span_241](end_span)[span_242](start_span)", energy: "Insight, Prophecy, Power[span_242](end_span)[span_243](start_span)", season: "Fall, Winter[span_243](end_span)[span_244](start_span)", elem: "Earth, Air[span_244](end_span)[span_245](start_span)", color: "Black, Blue, Purple[span_245](end_span)[span_246](start_span)", aff: "나는 나의 신성한 힘을 주장하며 무한한 잠재력에 마음을 엽니다.[span_246](end_span)" },
-    { name: "Robin", msg: "새로운 성장이 곧 시작됩니다. [span_247](start_span)[span_248](start_span)정체된 영역에서 변화를 느끼고 자연이 주는 긍정적인 메시지에 귀를 기울이세요.[span_247](end_span)[span_248](end_span)[span_249](start_span)", energy: "New growth, Good fortune, Cheer[span_249](end_span)[span_250](start_span)", season: "Winter, Spring[span_250](end_span)[span_251](start_span)", elem: "Fire, Air[span_251](end_span)[span_252](start_span)", color: "Brown, Red[span_252](end_span)[span_253](start_span)", aff: "모든 새로운 기회는 나에게 선물이며 축복입니다.[span_253](end_span)" },
-    { name: "Starling", msg: "혼자만의 시간보다는 공동체와 연결되어 소통하세요. [span_254](start_span)[span_255](start_span)그룹의 에너지가 당신에게 새로운 활력을 줄 것입니다.[span_254](end_span)[span_255](end_span)[span_256](start_span)", energy: "Community, Group mind, Communication[span_256](end_span)[span_257](start_span)", season: "Spring[span_257](end_span)[span_258](start_span)", elem: "Air[span_258](end_span)[span_259](start_span)", color: "Black, Yellow, White[span_259](end_span)[span_260](start_span)", aff: "나는 타인을 환영하며 공동체의 선물을 기쁘게 받습니다.[span_260](end_span)" },
-    { name: "Turkey", msg: "당신이 가진 풍요로움을 인정하고 이를 다른 이들과 나누세요. [span_261](start_span)[span_262](start_span)감사는 당신의 진동을 높여주는 열쇠입니다.[span_261](end_span)[span_262](end_span)[span_263](start_span)", energy: "Abundance, Gratitude, Service[span_263](end_span)[span_264](start_span)", season: "Fall[span_264](end_span)[span_265](start_span)", elem: "Earth[span_265](end_span)[span_266](start_span)", color: "Black, Brown, Red[span_266](end_span)[span_267](start_span)", aff: "나는 이제 나의 풍요로움을 다른 이들에게 기꺼이 제안하고 나눕니다.[span_267](end_span)" },
-    { name: "Vulture", msg: "낡은 역할과 믿음을 놓아주어 새로운 탄생의 문을 여세요. [span_268](start_span)[span_269](start_span)정화의 과정을 거쳐 신선한 시작을 맞이하게 될 것입니다.[span_268](end_span)[span_269](end_span)[span_270](start_span)", energy: "Death, Purification, Rebirth[span_270](end_span)[span_271](start_span)", season: "Fall, Winter[span_271](end_span)[span_272](start_span)", elem: "Earth, Air[span_272](end_span)[span_273](start_span)", color: "Black, Brown[span_273](end_span)[span_274](start_span)", aff: "나는 내 모든 삶의 경험을 존중하고 기쁘게 받아들입니다.[span_274](end_span)" },
-    { name: "Woodpecker", msg: "당신의 꿈을 실현하기 위해 끈기와 분별력을 사용하세요. [span_275](start_span)[span_276](start_span)장애물을 만났을 때 새로운 리듬을 도입하는 유연함이 필요합니다.[span_275](end_span)[span_276](end_span)[span_277](start_span)", energy: "Discernment, Fortitude, Wisdom[span_277](end_span)[span_278](start_span)", season: "Summer, Fall[span_278](end_span)[span_279](start_span)", elem: "Earth, Air[span_279](end_span)[span_280](start_span)", color: "Black, White, Red[span_280](end_span)[span_281](start_span)", aff: "나는 나의 모든 행동에서 생각과 지혜, 그리고 강인함을 일치시킵니다.[span_281](end_span)" },
-    { name: "Wren", msg: "당신은 이미 필요한 모든 자원을 가지고 있습니다. [span_282](start_span)[span_283](start_span)밖에서 찾지 말고 내면의 자신감을 믿고 당당하게 서세요.[span_282](end_span)[span_283](end_span)[span_284](start_span)", energy: "Confidence, Resources, Adaptability[span_284](end_span)[span_285](start_span)", season: "Winter, Spring[span_285](end_span)[span_286](start_span)", elem: "Earth, Air[span_286](end_span)[span_287](start_span)", color: "Brown, Grey[span_287](end_span)[span_288](start_span)", aff: "나의 자신감과 내면의 힘이 나의 앞길을 아름답게 안내합니다.[span_288](end_span)" },
-    { name: "White Swan", msg: "신성한 은총의 힘이 당신과 함께합니다. [span_289](start_span)[span_290](start_span)현재의 변화를 부드럽고 조화롭게 받아들일 수 있는 힘이 당신 안에 있습니다.[span_289](end_span)[span_290](end_span)[span_291](start_span)", energy: "Grace, Beauty, Fidelity, Transformation[span_291](end_span)[span_292](start_span)", season: "Summer[span_292](end_span)[span_293](start_span)", elem: "Water, Air[span_293](end_span)[span_294](start_span)", color: "White[span_294](end_span)[span_295](start_span)", aff: "나는 신성한 은총의 선물을 수용하고 내 안의 치유의 빛을 존중합니다.[span_295](end_span)" },
-    { name: "White Turkey", msg: "지구의 치유와 연결되세요. [span_296](start_span)[span_297](start_span)환경이나 주변을 돌봄으로써 당신 자신의 풍요와 신체적 에너지도 함께 치유될 것입니다.[span_296](end_span)[span_297](end_span)[span_298](start_span)", energy: "Earth-based healing, Abundance, Divine wisdom[span_298](end_span)[span_299](start_span)", season: "Fall[span_299](end_span)[span_300](start_span)", elem: "Earth, Air[span_300](end_span)[span_301](start_span)", color: "White[span_301](end_span)[span_302](start_span)", aff: "나는 지구의 신성한 풍요와 치유를 받아들이기 위해 마음을 엽니다.[span_302](end_span)" },
-    { name: "White Eagle", msg: "당신의 영혼의 독특한 목적과 일치될 시간입니다. [span_303](start_span)[span_304](start_span)두려움을 버리고 인류를 위한 당신만의 기여를 시작하세요.[span_303](end_span)[span_304](end_span)[span_305](start_span)", energy: "Soul's purpose, Highest vision, Power[span_305](end_span)[span_306](start_span)", season: "Summer[span_306](end_span)[span_307](start_span)", elem: "Fire, Air[span_307](end_span)[span_308](start_span)", color: "White[span_308](end_span)[span_309](start_span)", aff: "나는 나의 영혼의 독특하고 신성한 목적에 깨어납니다.[span_309](end_span)" },
-    { name: "White Owl", msg: "더 예리한 감각으로 영적인 안내에 귀를 기울이세요. [span_310](start_span)[span_311](start_span)동시성이나 직관을 통해 오는 메시지를 신뢰하고 따를 때입니다.[span_310](end_span)[span_311](end_span)[span_312](start_span)", energy: "Intuition, Wisdom, Knowing[span_312](end_span)[span_313](start_span)", season: "Fall[span_313](end_span)[span_314](start_span)", elem: "Air[span_314](end_span)[span_315](start_span)", color: "White[span_315](end_span)[span_316](start_span)", aff: "나는 내 안에서 솟아나는 신성한 메시지와 안내를 소중히 여깁니다.[span_316](end_span)" }
-];
+document.addEventListener('DOMContentLoaded', function() {
+    const deckData = [
+        { name: "Blackbird", msg: "보이지 않는 세계의 신비와 마법을 환영하세요. 어둠 속에서 찾은 영감이 당신의 숨겨진 잠재력을 깨워줄 것입니다.", energy: "Mystery, Hidden potential", season: "Spring, Summer, Fall", elem: "Air, Water", color: "Black, Red", aff: "나는 삶의 신비와 마법을 받아들이고 그 안으로 기꺼이 나아갑니다." },
+        { name: "Bluebird", msg: "당신의 공간에 평화와 기쁨의 축복을 전합니다. 자신에게 전하는 메시지가 친절하고 긍정적인지 확인해 보세요.", energy: "Happiness, Joy, Peace", season: "Winter, Spring", elem: "Air", color: "Blue", aff: "나는 내 삶 속에 더 깊은 평화와 기쁨의 감각을 초대합니다." },
+        { name: "Blue Jay", msg: "자신이 가진 다양한 기술과 특성을 통합하여 숙련된 마스터로서 목표를 향해 나아가세요.", energy: "Mastery, Communication, Family", season: "All year round", elem: "Earth, Air", color: "Blue, White, Black", aff: "나는 나의 모든 부분을 되찾고 최고의 잠재력을 향해 마음을 엽니다." },
+        { name: "Canary", msg: "자신의 목소리를 사용하여 다른 이들을 고양시키고 치유하세요. 이제 주저함을 버리고 당당하게 표현할 때입니다.", energy: "Communication, Sensitivity", season: "All year round", elem: "Fire, Air", color: "Yellow, Blue", aff: "나는 나의 표현이 깨어나도록 허용합니다. 나는 독특하고 가치 있는 존재입니다." },
+        { name: "Cardinal", msg: "자신감과 자존감을 가지고 리더십의 기회를 잡으세요. 당신은 이 여정에서 매우 중요한 존재임을 기억하세요.", energy: "Leadership, Self-worth, Vitality, Confidence", season: "Winter", elem: "Fire, Air", color: "Red, Black", aff: "나는 자신감을 가지고 새로운 기회들을 기꺼이 수용합니다." },
+        { name: "Chickadee", msg: "삶을 되돌아보고 낡은 패턴을 버릴 공간을 만드세요. 새로운 변화의 징후에 주의를 기울일 때입니다.", energy: "Communication, Activity, Adaptability", season: "Spring, Fall", elem: "Earth, Air", color: "Black, White, Grey, Brown", aff: "나는 나를 붙잡고 있는 모든 생각과 패턴을 기꺼이 놓아줍니다." },
+        { name: "Condor", msg: "지나온 투쟁과 고난을 넘어 이제 삶을 더 넓은 시야로 바라보세요. 당신은 이미 그것을 이겨낼 힘을 가지고 있습니다.", energy: "Improvement, Power, Adaptability", season: "Winter, Fall", elem: "Earth, Air", color: "Black, White, Grey, Brown", aff: "나의 최고의 비전은 넓고 광활합니다. 나는 나를 기다리는 모든 것을 환영합니다." },
+        { name: "Crane", msg: "당신을 지지해 줄 장기적인 파트너십과 관계의 강화가 다가오고 있습니다. 감성 지능을 활용해 주변을 살피세요.", energy: "Longevity, Creation, Union", season: "All year round", elem: "Water, Air", color: "White, Grey", aff: "나는 이제 나의 신성한 파트너십을 신뢰하고 받아들일 준비가 되었습니다." },
+        { name: "Crow", msg: "우주의 법칙과 창조의 힘을 믿고 당신이 원하는 것을 현실로 만들기 시작하세요. 이 과정을 즐기길 바랍니다.", energy: "Creation, Universal laws, Communication", season: "All year round", elem: "Earth, Air", color: "Black, Purple", aff: "나는 나의 높은 연결성을 인정하며, 강력한 창조의 채널이 됩니다." },
+        { name: "Dove", msg: "평화와 사랑, 축복의 메시지가 도착했습니다. 숨을 고르고 내면의 고요함을 되찾아 세상과 연결되세요.", energy: "Peace, Happiness, Serenity", season: "All year round", elem: "Earth, Water, Air", color: "White, Ivory, Grey", aff: "평화는 내 안과 주변에 늘 존재하며, 나는 이를 감사히 나눕니다." },
+        { name: "Duck", msg: "삶이 너무 바빠 길을 잃었다면, 당신을 가장 편안하게 해주는 커뮤니티와 장소로 돌아가 위로를 얻으세요.", energy: "Emotional support, Comfort, Community", season: "Spring, Summer", elem: "Earth, Water, Air", color: "White, Brown, Teal, Green, Black", aff: "나는 나에게 안전과 지지를 제공하는 친구와 환경을 환영합니다." },
+        { name: "Eagle", msg: "영적 각성이 일어나고 있습니다. 더 높은 관점에서 삶을 바라보고 개인적인 책임을 다해 새로운 비전을 세우세요.", energy: "Power, Perception, Spiritual insight, Knowledge", season: "Summer", elem: "Fire, Air", color: "White, Black, Brown, Yellow", aff: "나는 나의 힘과 지식, 그리고 비전에 지금 깨어납니다." },
+        { name: "Falcon", msg: "당신은 이미 목표를 이룰 기술과 통찰력을 갖췄습니다. 망설임 없이 도약하여 원하는 바를 쟁취하세요.", energy: "Power, Perception, Empowerment", season: "Summer, Fall", elem: "Fire, Air", color: "White, Brown", aff: "나는 나의 본능을 따르며 나의 최고의 목표를 달성합니다." },
+        { name: "Finch", msg: "기쁨과 풍요로운 기회들이 다가옵니다. 활동과 휴식 사이의 균형을 유지하며 새로운 시작을 준비하세요.", energy: "Vitality, Energy, Abundance", season: "Summer", elem: "Air", color: "White, Brown, Red, Grey, Yellow", aff: "나는 새로운 풍요와 빛을 맞이하고 포용할 준비가 되었습니다." },
+        { name: "Flicker", msg: "자연스러운 변화의 리듬을 신뢰하세요. 과거의 패턴에 대한 저항을 버리고 긍정적인 성장의 흐름을 따르세요.", energy: "New rhythm, Growth", season: "Summer", elem: "Earth, Air", color: "White, Black, Red", aff: "나는 삶의 무한한 리듬과 흐름을 신뢰합니다." },
+        { name: "Goose", msg: "채워지지 않은 욕망이 새로운 에너지를 자극합니다. 이제 당신의 진정한 퀘스트를 찾아 신속하게 움직일 때입니다.", energy: "Travel, Communication, Fulfillment", season: "Spring, Fall", elem: "Earth, Water, Air", color: "White, Black, Grey, Brown", aff: "나는 이제 나의 진정한 탐구를 시작하며 가슴을 열어 성취를 맞이합니다." },
+        { name: "Grouse", msg: "신성한 춤과 움직임을 통해 내면의 고요함과 연결되세요. 당신만의 신성한 소용돌이를 찾을 시간입니다.", energy: "Movement, Stillness, Life cycle", season: "Spring", elem: "Earth, Air", color: "White, Black, Brown", aff: "나는 내 안의 독특하고 신성한 나선형의 힘을 찾고 그것에 마음을 엽니다." },
+        { name: "Hawk", msg: "당신의 직관적인 인식이 옳음을 확인해 줍니다. 놓치고 있었던 신호나 동시성에 주의를 기울이세요.", energy: "Communication, Vision, Messages", season: "Spring, Fall", elem: "Air", color: "White, Black, Brown", aff: "통찰과 영감은 나의 신성한 전령입니다. 나는 그 안내를 듣고 받아들입니다." },
+        { name: "Heron", msg: "남의 시선을 신경 쓰지 말고 당신만의 독특한 길을 걷으세요. 인내심을 갖고 당신의 경로가 펼쳐지도록 두세요.", energy: "Self-reliance, Balance, Choice", season: "Spring", elem: "Water, Air", color: "White, Blue, Grey, Brown", aff: "나는 이제 나의 진정한 삶의 목적을 수용하고 받아들입니다." },
+        { name: "Hummingbird", msg: "과거의 부담과 부정적인 에너지를 털어내고 지금 이 순간의 달콤함과 기쁨을 만끽하세요. 가벼운 존재가 되는 것이 선물입니다.", energy: "Joy, Sweetness, Freedom", season: "Summer", elem: "Air", color: "Red, White, Green", aff: "나는 가볍고 즐거우며 자유롭습니다. 나는 삶의 달콤함을 품습니다." },
+        { name: "Kingfisher", msg: "풍요와 번영의 약속이 다가옵니다. 너무 애쓰지 말고 자연스러운 흐름이 당신에게 오도록 마음을 열고 준비하세요.", energy: "Prosperity, Luck, New warmth", season: "Summer", elem: "Air, Water", color: "Red, White, Green, Grey, Blue", aff: "나의 세상은 사랑스럽고 풍요롭습니다. 나는 이 선물들을 받기 위해 마음을 엽니다." },
+        { name: "Loon", msg: "당신의 꿈에 주의를 기울이세요. 보이지 않는 세계에서의 메시지가 꿈을 통해 더 선명하고 상징적으로 나타날 것입니다.", energy: "Dreams, Messages, Consciousness", season: "Summer", elem: "Air, Water", color: "Black, White", aff: "나의 꿈과 비전은 강력하고 활기차며 명확합니다." },
+        { name: "Magpie", msg: "물질적인 집착보다는 내면과 외면의 균형을 찾으세요. 조만간 마법 같은 행운의 기회가 찾아올 것입니다.", energy: "Materialism, Balance, Good fortune", season: "Spring, Summer", elem: "Air", color: "Black, White", aff: "나는 나의 경로에 진실하고 균형을 유지하는 데 필요한 것만을 구합니다." },
+        { name: "Meadowlark", msg: "자기 발견의 멋진 모험이 시작됩니다. 당신의 내면의 힘과 자신감을 믿고 유쾌한 마음으로 성장을 즐기세요.", energy: "Self-development, Cheerfulness", season: "Summer", elem: "Earth, Air", color: "Black, Yellow, White", aff: "나는 내 안의 빛이라는 반가운 선물을 소중히 여기기로 선택합니다." },
+        { name: "Nuthatch", msg: "영감을 얻기 위해 높이 날아오르되, 그 지혜를 현실 세계에서 실질적인 행동으로 옮기세요. 신선한 시각이 필요합니다.", energy: "Grounding, Faith, New perspectives", season: "Summer", elem: "Earth, Air", color: "Black, Blue, White, Grey, Brown", aff: "흔들리지 않는 믿음으로, 나는 새로운 관점이 나타나도록 허용합니다." },
+        { name: "Oriole", msg: "창의성을 발휘해 새로운 아이디어를 삶에 엮어 넣으세요. 태양처럼 긍정적인 변화와 성공이 당신을 기다립니다.", energy: "Happiness, New projects, Creativity", season: "Summer", elem: "Air, Fire", color: "Orange, Yellow, Black", aff: "나의 창의성과 프로젝트들은 황금빛으로 축복받았습니다." },
+        { name: "Osprey", msg: "성공과 풍요의 징조입니다. 우선순위를 명확히 정하고 당신의 독특한 기술을 활용해 목표에 과감히 뛰어드세요.", energy: "Abundance, Success, Skill", season: "Summer, Fall", elem: "Water, Air", color: "Black, White, Grey, Brown", aff: "나는 내 삶의 신성한 풍요로움에 감사합니다." },
+        { name: "Ostrich", msg: "머릿속의 지식을 실질적으로 적용할 시간입니다. 가끔은 내면을 깊이 들여다보며 당신의 진실을 존중하세요.", energy: "Grounding, Truth, Choice", season: "All year round", elem: "Earth", color: "Black, White, Grey, Brown", aff: "진실이 나의 여정을 안내합니다. 나는 이 방식 안에서 완전히 접지됩니다." },
+        { name: "Owl", msg: "당신의 직관은 정확합니다. 어둠이나 불확실성에 저항하지 말고 내면의 지혜를 통해 답을 명확히 찾아내세요.", energy: "Intuition, Listening, Awareness", season: "Fall", elem: "Air", color: "Black, White, Grey, Brown", aff: "나의 직관은 강력하고 활기찹니다. 나는 이 내면의 지혜를 존중합니다." },
+        { name: "Parrot", msg: "타인의 의견이나 판단에 휘둘리지 말고 당신만의 독특한 목소리를 내세요. 당신의 개성을 빛낼 용기가 필요합니다.", energy: "Personal expression, Color, Individuality", season: "All year round", elem: "Air", color: "Blue, Green, Yellow, Red, White", aff: "나는 세상에서 나의 개성과 독특한 표현을 존중합니다." },
+        { name: "Peacock", msg: "낡은 경험을 벗어던지고 지혜로운 영혼으로서 다시 태어나세요. 당신의 영혼이 여정을 안내하고 있음을 믿으세요.", energy: "Vision, Rebirth, Watchfulness", season: "Spring, Fall", elem: "Earth, Air", color: "Blue, Green, Gold, Brown", aff: "나는 내 영혼의 신성한 지혜에 대한 더 큰 이해를 구합니다." },
+        { name: "Pelican", msg: "용서의 힘을 사용해 과거의 고통과 죄책감을 털어내세요. 자신과 타인을 용서할 때 비로소 더 가볍게 날아오를 수 있습니다.", energy: "Forgiveness, Selflessness, Emotions", season: "Spring, Summer, Fall", elem: "Water, Air", color: "Brown, White", aff: "나는 모든 것과 모든 사람을, 특히 나 자신을 용서합니다." },
+        { name: "Pheasant", msg: "가정생활과 창의적인 프로젝트에 관심을 기울이세요. 조화롭고 지지적인 환경이 당신의 창조적 에너지를 깨울 것입니다.", energy: "Creativity, Fertility, Sexuality", season: "All year round", elem: "Earth, Air", color: "Brown, White, Cream", aff: "나는 활기차고 생동감 넘치며 창조적인 존재입니다." },
+        { name: "Raven", msg: "당신의 개인적인 힘을 인정하고 우주의 신호를 따르세요. 당신의 잠재력은 무한하며 이제 그것을 소유할 때입니다.", energy: "Insight, Prophecy, Power", season: "Fall, Winter", elem: "Earth, Air", color: "Black, Blue, Purple", aff: "나는 나의 신성한 힘을 주장하며 무한한 잠재력에 마음을 엽니다." },
+        { name: "Robin", msg: "새로운 성장이 곧 시작됩니다. 정체된 영역에서 변화를 느끼고 자연이 주는 긍정적인 메시지에 귀를 기울이세요.", energy: "New growth, Good fortune, Cheer", season: "Winter, Spring", elem: "Fire, Air", color: "Brown, Red", aff: "모든 새로운 기회는 나에게 선물이며 축복입니다." },
+        { name: "Starling", msg: "혼자만의 시간보다는 공동체와 연결되어 소통하세요. 그룹의 에너지가 당신에게 새로운 활력을 줄 것입니다.", energy: "Community, Group mind, Communication", season: "Spring", elem: "Air", color: "Black, Yellow, White", aff: "나는 타인을 환영하며 공동체의 선물을 기쁘게 받습니다." },
+        { name: "Turkey", msg: "당신이 가진 풍요로움을 인정하고 이를 다른 이들과 나누세요. 감사는 당신의 진동을 높여주는 열쇠입니다.", energy: "Abundance, Gratitude, Service", season: "Fall", elem: "Earth", color: "Black, Brown, Red", aff: "나는 이제 나의 풍요로움을 다른 이들에게 기꺼이 제안하고 나눕니다." },
+        { name: "Vulture", msg: "낡은 역할과 믿음을 놓아주어 새로운 탄생의 문을 여세요. 정화의 과정을 거쳐 신선한 시작을 맞이하게 될 것입니다.", energy: "Death, Purification, Rebirth", season: "Fall, Winter", elem: "Earth, Air", color: "Black, Brown", aff: "나는 내 모든 삶의 경험을 존중하고 기쁘게 받아들입니다." },
+        { name: "Woodpecker", msg: "당신의 꿈을 실현하기 위해 끈기와 분별력을 사용하세요. 장애물을 만났을 때 새로운 리듬을 도입하는 유연함이 필요합니다.", energy: "Discernment, Fortitude, Wisdom", season: "Summer, Fall", elem: "Earth, Air", color: "Black, White, Red", aff: "나는 나의 모든 행동에서 생각과 지혜, 그리고 강인함을 일치시킵니다." },
+        { name: "Wren", msg: "당신은 이미 필요한 모든 자원을 가지고 있습니다. 밖에서 찾지 말고 내면의 자신감을 믿고 당당하게 서세요.", energy: "Confidence, Resources, Adaptability", season: "Winter, Spring", elem: "Earth, Air", color: "Brown, Grey", aff: "나의 자신감과 내면의 힘이 나의 앞길을 아름답게 안내합니다." },
+        { name: "White Swan", msg: "신성한 은총의 힘이 당신과 함께합니다. 현재의 변화를 부드럽고 조화롭게 받아들일 수 있는 힘이 당신 안에 있습니다.", energy: "Grace, Beauty, Fidelity, Transformation", season: "Summer", elem: "Water, Air", color: "White", aff: "나는 신성한 은총의 선물을 수용하고 내 안의 치유의 빛을 존중합니다." },
+        { name: "White Turkey", msg: "지구의 치유와 연결되세요. 환경이나 주변을 돌봄으로써 당신 자신의 풍요와 신체적 에너지도 함께 치유될 것입니다.", energy: "Earth-based healing, Abundance, Divine wisdom", season: "Fall", elem: "Earth, Air", color: "White", aff: "나는 지구의 신성한 풍요와 치유를 받아들이기 위해 마음을 엽니다." },
+        { name: "White Eagle", msg: "당신의 영혼의 독특한 목적과 일치될 시간입니다. 두려움을 버리고 인류를 위한 당신만의 기여를 시작하세요.", energy: "Soul's purpose, Highest vision, Power", season: "Summer", elem: "Fire, Air", color: "White", aff: "나는 나의 영혼의 독특하고 신성한 목적에 깨어납니다." },
+        { name: "White Owl", msg: "더 예리한 감각으로 영적인 안내에 귀를 기울이세요. 동시성이나 직관을 통해 오는 메시지를 신뢰하고 따를 때입니다.", energy: "Intuition, Wisdom, Knowing", season: "Fall", elem: "Air", color: "White", aff: "나는 내 안에서 솟아나는 신성한 메시지와 안내를 소중히 여깁니다." }
+    ];
 
-const alphaArea = document.getElementById('alphaBtns');
-const searchBox = document.getElementById('searchBox');
-const suggestList = document.getElementById('suggestList');
-const displayArea = document.getElementById('displayArea');
+    const alphaBtns = document.getElementById('alphaBtns');
+    const searchInput = document.getElementById('searchInput');
+    const suggestList = document.getElementById('suggestList');
+    const resultArea = document.getElementById('resultArea');
 
-// 알파벳 버튼 생성
-"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(l => {
-    const b = document.createElement('div');
-    b.className = 'letter-btn';
-    b.innerText = l;
-    b.addEventListener('click', () => {
-        searchBox.value = l;
-        filter(l);
-    });
-    alphaArea.appendChild(b);
-});
-
-// 검색창 입력 이벤트
-searchBox.addEventListener('input', (e) => filter(e.target.value));
-
-function filter(val) {
-    suggestList.innerHTML = '';
-    if(!val) {
-        suggestList.style.display = 'none';
-        return;
-    }
-    const matches = deck.filter(d => d.name.toLowerCase().includes(val.toLowerCase()));
-    if(matches.length > 0) {
-        suggestList.style.display = 'block';
-        matches.forEach(m => {
-            const i = document.createElement('div');
-            i.className = 'suggest-item';
-            i.innerText = m.name;
-            i.addEventListener('click', () => show(m));
-            suggestList.appendChild(i);
+    const alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+    
+    alphabets.forEach(char => {
+        const btn = document.createElement('div');
+        btn.className = 'alpha-btn';
+        btn.innerText = char;
+        btn.addEventListener('click', () => {
+            searchInput.value = char;
+            handleSearch(char);
         });
-    } else {
-        suggestList.style.display = 'none';
-    }
-}
+        alphaBtns.appendChild(btn);
+    });
 
-function show(bird) {
-    searchBox.value = bird.name;
-    suggestList.style.display = 'none';
-    displayArea.style.display = 'block';
-    
-    document.getElementById('bName').innerText = bird.name;
-    document.getElementById('bMeta').innerText = bird.season + " | " + bird.elem;
-    document.getElementById('bMsg').innerText = bird.msg;
-    document.getElementById('bEnergy').innerHTML = "<strong>에너지:</strong> " + bird.energy;
-    document.getElementById('bColor').innerHTML = "<strong>색상:</strong> " + bird.color;
-    document.getElementById('bAff').innerText = bird.aff;
-    
-    // 모바일에서 결과창으로 스크롤
-    setTimeout(() => {
-        displayArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
-}
+    searchInput.addEventListener('input', (e) => {
+        handleSearch(e.target.value);
+    });
 
-// 외부 클릭 시 목록 닫기
-document.addEventListener('click', (e) => {
-    if (!searchBox.contains(e.target) && !suggestList.contains(e.target)) {
-        suggestList.style.display = 'none';
+    function handleSearch(query) {
+        suggestList.innerHTML = '';
+        if (!query.trim()) {
+            suggestList.style.display = 'none';
+            return;
+        }
+
+        const filtered = deckData.filter(item => item.name.toLowerCase().includes(query.toLowerCase()));
+        
+        if (filtered.length > 0) {
+            suggestList.style.display = 'block';
+            filtered.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'suggest-item';
+                div.innerText = item.name;
+                div.addEventListener('click', () => {
+                    displayResult(item);
+                });
+                suggestList.appendChild(div);
+            });
+        } else {
+            suggestList.style.display = 'none';
+        }
     }
+
+    function displayResult(item) {
+        searchInput.value = item.name;
+        suggestList.style.display = 'none';
+        resultArea.style.display = 'block';
+        
+        document.getElementById('resTitle').innerText = item.name;
+        document.getElementById('resMeta').innerText = `${item.season} • ${item.elem}`;
+        document.getElementById('resMsg').innerText = item.msg;
+        document.getElementById('resEnergy').innerHTML = `<strong>에너지:</strong> ${item.energy}`;
+        document.getElementById('resColor').innerHTML = `<strong>색상:</strong> ${item.color}`;
+        document.getElementById('resAff').innerText = item.aff;
+
+        setTimeout(() => {
+            resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 50);
+    }
+
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !suggestList.contains(e.target)) {
+            suggestList.style.display = 'none';
+        }
+    });
 });
 </script>
 </body>
